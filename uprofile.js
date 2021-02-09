@@ -6,13 +6,19 @@ var fs = require('fs');
 
 var config = require('./config');
 
-var ssl_option = {
-  cert : fs.readFileSync("path\to\cert"),
-  secureProtocol: 'TLSv1_2_method'
-};
+//cert : fs.readFileSync("path\to\cert"),
 
+//var ssl_option = ;
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const authProviderLocalCassandra = new cassandra.auth.PlainTextAuthProvider(config.username, config.password);
-const client = new cassandra.Client({contactPoints: [config.contactPoint], authProvider: authProviderLocalCassandra, sslOptions:ssl_option});
+const client = new cassandra.Client({
+  contactPoints: [config.contactPoint],
+  authProvider: authProviderLocalCassandra,
+  sslOptions: {
+    secureProtocol: 'TLSv1_2_method'
+  } 
+});
 
 async.series([
   function connect(next) {
